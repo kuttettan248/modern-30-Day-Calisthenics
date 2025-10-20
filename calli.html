@@ -1,0 +1,280 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>30-Day Calisthenics Plan — Beginner to Pro</title>
+  <style>
+    :root{
+      --bg:#0f1724; --card:#0b1220; --muted:#9aa6b2; --accent:#7dd3fc; --glass: rgba(255,255,255,0.03);
+      --glass-2: rgba(255,255,255,0.02);
+      --radius:16px; --gap:12px; font-family:Inter,ui-sans-serif,system-ui,-apple-system,'Segoe UI',Roboto,'Helvetica Neue',Arial;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%;margin:0;background:linear-gradient(180deg,#071022 0%, #081726 60%);color:#e6eef6}
+    header{display:flex;align-items:center;justify-content:space-between;padding:20px 24px;gap:12px}
+    h1{font-size:20px;margin:0}
+    p.lead{margin:4px 0 0;color:var(--muted);font-size:13px}
+
+    .container{display:grid;grid-template-columns:360px 1fr;gap:20px;padding:24px}
+
+    /* sidebar */
+    .panel{background:linear-gradient(180deg,var(--card),#071226);border-radius:var(--radius);padding:18px;box-shadow:0 6px 30px rgba(2,6,23,0.6);}
+    .box-title{display:flex;align-items:center;gap:10px}
+    .small{font-size:12px;color:var(--muted)}
+
+    /* calendar grid */
+    .calendar{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;margin-top:14px}
+    .day{background:var(--glass);border-radius:12px;padding:12px;min-height:78px;display:flex;flex-direction:column;justify-content:space-between;cursor:pointer;transition:transform .12s ease,box-shadow .12s}
+    .day:hover{transform:translateY(-4px);box-shadow:0 10px 30px rgba(0,0,0,0.4)}
+    .day .num{font-weight:700}
+    .day .mini{font-size:12px;color:var(--muted)}
+    .day.completed{background:linear-gradient(90deg,#052b33,#042836);border:1px solid rgba(125,211,252,0.08)}
+
+    /* exercise list */
+    .exercise-list{display:grid;grid-template-columns:1fr;gap:12px;margin-top:12px}
+    .ex-card{display:flex;gap:12px;align-items:center;background:var(--glass-2);padding:10px;border-radius:10px}
+    .ex-card img{width:76px;height:56px;object-fit:cover;border-radius:8px}
+    .ex-meta{flex:1}
+    .ex-meta h4{margin:0 0 4px 0;font-size:14px}
+    .ex-meta p{margin:0;color:var(--muted);font-size:13px}
+    .btn{background:transparent;border:1px solid rgba(255,255,255,0.06);padding:8px 12px;border-radius:10px;color:var(--accent);cursor:pointer}
+
+    /* modal/panel */
+    .detail{background:linear-gradient(180deg,#071022 0,#071228 100%);border-radius:var(--radius);padding:16px;height:100%;display:flex;flex-direction:column}
+    .detail .head{display:flex;justify-content:space-between;align-items:center}
+    .detail .head h2{margin:0;font-size:18px}
+    .detail .meta{color:var(--muted);font-size:13px;margin-top:6px}
+
+    .legend{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+    .legend .item{font-size:13px;color:var(--muted)}
+
+    footer.note{padding:18px 24px;color:var(--muted);font-size:13px}
+
+    /* responsive */
+    @media(max-width:980px){.container{grid-template-columns:1fr;}.calendar{grid-template-columns:repeat(5,1fr)}}
+    @media(max-width:640px){.calendar{grid-template-columns:repeat(3,1fr)} .ex-card img{width:64px;height:48px}}
+  </style>
+</head>
+<body>
+  <header>
+    <div>
+      <h1>30‑Day Calisthenics — Beginner → Advanced</h1>
+      <p class="lead">A clickable 30‑day plan. Click any day to see exercises, images and tips. Mark days complete.</p>
+    </div>
+    <div class="small">Made for: <strong>kuttu</strong> · Start today, stay consistent 🚀</div>
+  </header>
+
+  <main class="container">
+    <aside class="panel">
+      <div class="box-title"><div>
+        <div class="small">Plan structure</div>
+        <strong>3 phases · 30 days</strong>
+      </div></div>
+
+      <div style="margin-top:12px" class="small">
+        Phase 1 (Days 1–10): Foundation — form, posture, basic strength.<br>
+        Phase 2 (Days 11–20): Strength — harder variations, volume.<br>
+        Phase 3 (Days 21–30): Transformation — advanced variations & skills.
+      </div>
+
+      <div style="margin-top:16px">
+        <button id="resetProgress" class="btn" style="width:100%">Reset progress</button>
+      </div>
+
+      <div style="margin-top:14px" class="small">Legend</div>
+      <div class="legend">
+        <div class="item">💪 Strength</div>
+        <div class="item">🧘 Core / Mobility</div>
+        <div class="item">🤸 Skill / Balance</div>
+      </div>
+
+      <div style="margin-top:14px" class="small">Quick filter</div>
+      <div style="display:flex;gap:8px;margin-top:8px">
+        <button class="btn" data-filter="all">All</button>
+        <button class="btn" data-filter="foundation">Phase 1</button>
+        <button class="btn" data-filter="strength">Phase 2</button>
+        <button class="btn" data-filter="transform">Phase 3</button>
+      </div>
+
+      <div style="margin-top:18px" class="small">Exercises library</div>
+      <div id="library" style="margin-top:8px;max-height:360px;overflow:auto"></div>
+    </aside>
+
+    <section>
+      <div class="panel">
+        <div style="display:flex;align-items:center;justify-content:space-between">
+          <div>
+            <strong>Calendar (30 days)</strong>
+            <div class="small">Click a day to open exercises</div>
+          </div>
+          <div class="small">Progress: <span id="progressPercent">0%</span></div>
+        </div>
+
+        <div class="calendar" id="calendar"></div>
+      </div>
+
+      <div class="detail panel" id="detailPanel" style="margin-top:16px">
+        <div class="head">
+          <div>
+            <h2 id="detailTitle">Select a day</h2>
+            <div class="meta" id="detailPhase">Phase • —</div>
+          </div>
+          <div style="display:flex;gap:8px;align-items:center">
+            <button id="markDone" class="btn">Mark Day Complete</button>
+            <button id="openAll" class="btn">Open PDF (placeholder)</button>
+          </div>
+        </div>
+
+        <div id="exerciseList" class="exercise-list" aria-live="polite" style="margin-top:14px">
+          <div class="small">Choose a day from the calendar on top to view exercises and images.</div>
+        </div>
+
+      </div>
+    </section>
+  </main>
+
+  <footer class="note">Tip: warm up 5–8 minutes before each session. Focus on form over reps. Hydrate.</footer>
+
+  <script>
+    // Exercise definitions (name, emoji image, short desc, tag)
+    const EXERCISES = {
+      'incline_pushup':{name:'Incline / Regular Push‑up',img:'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="400" height="260"><rect width="100%" height="100%" fill="%23051726"/><text x="50%" y="50%" fill="%237dd3fc" font-size="28" font-family="Arial" text-anchor="middle" dominant-baseline="middle">Push‑up</text></svg>',desc:'Chest, shoulders, triceps. Focus on clean full ROM.',tag:'foundation'},
+      'assisted_pullup':{name:'Assisted / Negative Pull‑up',img:'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="400" height="260"><rect width="100%" height="100%" fill="%23051726"/><text x="50%" y="50%" fill="%237dd3fc" font-size="28" font-family="Arial" text-anchor="middle" dominant-baseline="middle">Pull‑up</text></svg>',desc:'Back & biceps. Use band or negatives to build strength.',tag:'foundation'},
+      'squat':{name:'Body‑weight Squat',img:'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="400" height="260"><rect width="100%" height="100%" fill="%23051726"/><text x="50%" y="50%" fill="%237dd3fc" font-size="28" font-family="Arial" text-anchor="middle" dominant-baseline="middle">Squat</text></svg>',desc:'Leg foundation — quads, glutes, hamstrings.',tag:'foundation'},
+      'plank':{name:'Plank',img:'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="400" height="260"><rect width="100%" height="100%" fill="%23051726"/><text x="50%" y="50%" fill="%237dd3fc" font-size="28" font-family="Arial" text-anchor="middle" dominant-baseline="middle">Plank</text></svg>',desc:'Core stability and posture — hold with tight core.',tag:'foundation'},
+      'dead_bug':{name:'Dead Bug',img:'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="400" height="260"><rect width="100%" height="100%" fill="%23051726"/><text x="50%" y="50%" fill="%237dd3fc" font-size="26" font-family="Arial" text-anchor="middle" dominant-baseline="middle">Dead Bug</text></svg>',desc:'Core coordination, anti‑extension control.',tag:'foundation'},
+      'diamond_pushup':{name:'Diamond Push‑up',img:'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="400" height="260"><rect width="100%" height="100%" fill="%23051726"/><text x="50%" y="50%" fill="%23ffb86b" font-size="26" font-family="Arial" text-anchor="middle" dominant-baseline="middle">Diamond</text></svg>',desc:'Greater triceps emphasis, arm shaping.',tag:'strength'},
+      'bench_dip':{name:'Bench / Chair Dip',img:'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="400" height="260"><rect width="100%" height="100%" fill="%23051726"/><text x="50%" y="50%" fill="%23ffb86b" font-size="26" font-family="Arial" text-anchor="middle" dominant-baseline="middle">Dip</text></svg>',desc:'Triceps and chest. Keep shoulders safe.',tag:'strength'},
+      'pullup':{name:'Pull‑up / Chin‑up',img:'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="400" height="260"><rect width="100%" height="100%" fill="%23051726"/><text x="50%" y="50%" fill="%23ffb86b" font-size="26" font-family="Arial" text-anchor="middle" dominant-baseline="middle">Pull‑Up</text></svg>',desc:'Upper back & biceps — aim for full range.',tag:'strength'},
+      'inverted_row':{name:'Inverted Row',img:'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="400" height="260"><rect width="100%" height="100%" fill="%23051726"/><text x="50%" y="50%" fill="%237dd3fc" font-size="26" font-family="Arial" text-anchor="middle" dominant-baseline="middle">Inverted Row</text></svg>',desc:'Horizontal pulling — posture & rear delts.',tag:'strength'},
+      'reverse_lunge':{name:'Reverse Lunge',img:'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="400" height="260"><rect width="100%" height="100%" fill="%23051726"/><text x="50%" y="50%" fill="%237dd3fc" font-size="24" font-family="Arial" text-anchor="middle" dominant-baseline="middle">Reverse Lunge</text></svg>',desc:'Leg balance, single‑leg strength.',tag:'strength'},
+      'hanging_knee':{name:'Hanging Knee / Leg Raise',img:'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="400" height="260"><rect width="100%" height="100%" fill="%23051726"/><text x="50%" y="50%" fill="%23fca5a5" font-size="24" font-family="Arial" text-anchor="middle" dominant-baseline="middle">Hanging Raise</text></svg>',desc:'Lower abs and grip strength.',tag:'strength'},
+      'archer_pushup':{name:'Archer / One‑arm Progression',img:'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="400" height="260"><rect width="100%" height="100%" fill="%23051726"/><text x="50%" y="50%" fill="%23ffd572" font-size="24" font-family="Arial" text-anchor="middle" dominant-baseline="middle">Archer</text></svg>',desc:'Asymmetrical push to develop one‑arm strength.',tag:'transform'},
+      'spike_pushup':{name:'Spike / Pike Push‑up',img:'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="400" height="260"><rect width="100%" height="100%" fill="%23051726"/><text x="50%" y="50%" fill="%23ffd572" font-size="22" font-family="Arial" text-anchor="middle" dominant-baseline="middle">Pike</text></svg>',desc:'Shoulder strength — gateway to handstand push‑ups.',tag:'transform'},
+      'pistol_box':{name:'Pistol Squat (Box Assist)',img:'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="400" height="260"><rect width="100%" height="100%" fill="%23051726"/><text x="50%" y="50%" fill="%23ffd572" font-size="22" font-family="Arial" text-anchor="middle" dominant-baseline="middle">Pistol</text></svg>',desc:'Single‑leg strength & balance. Use box for support.',tag:'transform'},
+      'lsit_hold':{name:'L‑sit / Core Hold',img:'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="400" height="260"><rect width="100%" height="100%" fill="%23051726"/><text x="50%" y="50%" fill="%23c7f9f1" font-size="22" font-family="Arial" text-anchor="middle" dominant-baseline="middle">L‑Sit</text></svg>',desc:'Intense core & hip‑flexor hold.',tag:'transform'},
+      'wall_handstand':{name:'Wall Handstand Hold',img:'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="400" height="260"><rect width="100%" height="100%" fill="%23051726"/><text x="50%" y="50%" fill="%23c7f9f1" font-size="22" font-family="Arial" text-anchor="middle" dominant-baseline="middle">Handstand</text></svg>',desc:'Shoulder stability and balance — practice holds.',tag:'transform'}
+    };
+
+    // 30 day mapping (simple but close to the video blueprint)
+    const DAYS = Array.from({length:30},(_,i)=>{
+      const d=i+1;
+      if(d<=10){ // phase 1 foundation
+        return {
+          day:d,phase:'Foundation',ex:['incline_pushup','assisted_pullup','squat','plank','dead_bug']
+        }
+      } else if(d<=20){ // phase 2 strength
+        return {day:d,phase:'Strength',ex:['incline_pushup','diamond_pushup','bench_dip','pullup','inverted_row','reverse_lunge','hanging_knee']}
+      } else { // phase 3 transform
+        return {day:d,phase:'Transform',ex:['archer_pushup','spike_pushup','pullup','hanging_knee','pistol_box','lsit_hold','wall_handstand']}
+      }
+    });
+
+    // Render calendar
+    const calendarEl=document.getElementById('calendar');
+    const detailTitle=document.getElementById('detailTitle');
+    const detailPhase=document.getElementById('detailPhase');
+    const exerciseList=document.getElementById('exerciseList');
+    const markDoneBtn=document.getElementById('markDone');
+    const resetBtn=document.getElementById('resetProgress');
+    const progressPercent=document.getElementById('progressPercent');
+
+    let selectedDay=null;
+
+    function loadProgress(){
+      try{const raw=localStorage.getItem('calisthenics_progress');return raw?JSON.parse(raw):{done:[]}}catch(e){return {done:[]}}
+    }
+    function saveProgress(obj){localStorage.setItem('calisthenics_progress',JSON.stringify(obj));}
+    let progress = loadProgress();
+
+    function updateProgressUI(){
+      const pct=Math.round((progress.done.length/30)*100);
+      progressPercent.textContent=pct+'%';
+    }
+
+    function renderCalendar(filter='all'){
+      calendarEl.innerHTML='';
+      DAYS.forEach(day=>{
+        if(filter!=='all'){
+          if(filter==='foundation' && day.phase!=='Foundation') return;
+          if(filter==='strength' && day.phase!=='Strength') return;
+          if(filter==='transform' && day.phase!=='Transform') return;
+        }
+        const div=document.createElement('div');div.className='day';
+        if(progress.done.includes(day.day)) div.classList.add('completed');
+        div.innerHTML=`<div><div class="num">Day ${day.day}</div><div class="mini">${day.phase}</div></div><div class="mini">${day.ex.length} exercises</div>`;
+        div.addEventListener('click',()=>openDay(day.day));
+        calendarEl.appendChild(div);
+      })
+    }
+
+    function openDay(n){
+      const day = DAYS.find(d=>d.day===n); if(!day) return;
+      selectedDay=day.day;
+      detailTitle.textContent = 'Day '+day.day+' — Exercises';
+      detailPhase.textContent = 'Phase • '+day.phase;
+      exerciseList.innerHTML='';
+      day.ex.forEach(exId=>{
+        const ex=EXERCISES[exId];
+        const card=document.createElement('div');card.className='ex-card';
+        const img=document.createElement('img');img.src=ex.img;img.alt=ex.name;
+        const meta=document.createElement('div');meta.className='ex-meta';
+        const h=document.createElement('h4');h.textContent=ex.name;
+        const p=document.createElement('p');p.textContent=ex.desc;
+        meta.appendChild(h);meta.appendChild(p);
+        card.appendChild(img);card.appendChild(meta);
+        exerciseList.appendChild(card);
+      })
+      // show mark done state
+      if(progress.done.includes(day.day)) markDoneBtn.textContent='Mark Day Incomplete'; else markDoneBtn.textContent='Mark Day Complete';
+      // scroll into view
+      detailTitle.scrollIntoView({behavior:'smooth',block:'center'});
+    }
+
+    markDoneBtn.addEventListener('click',()=>{
+      if(selectedDay===null) return alert('Select a day first.');
+      const idx = progress.done.indexOf(selectedDay);
+      if(idx===-1) progress.done.push(selectedDay); else progress.done.splice(idx,1);
+      saveProgress(progress); renderCalendar(currentFilter); updateProgressUI();
+      // refresh detail UI
+      openDay(selectedDay);
+    })
+
+    resetBtn.addEventListener('click',()=>{
+      if(confirm('Reset all progress?')){progress={done:[]};saveProgress(progress);renderCalendar(currentFilter);updateProgressUI();exerciseList.innerHTML='<div class="small">Progress reset — choose a day.</div>';detailTitle.textContent='Select a day';detailPhase.textContent='Phase • —';selectedDay=null}
+    })
+
+    // library render
+    function renderLibrary(){
+      const lib=document.getElementById('library');lib.innerHTML='';
+      Object.keys(EXERCISES).forEach(id=>{
+        const e=EXERCISES[id];
+        const el=document.createElement('div');el.className='ex-card';
+        const img=document.createElement('img');img.src=e.img;img.alt=e.name;
+        const meta=document.createElement('div');meta.className='ex-meta';
+        const h=document.createElement('h4');h.textContent=e.name;h.style.fontSize='13px';
+        const p=document.createElement('p');p.textContent=e.desc;p.style.fontSize='12px';p.style.color='var(--muted)';
+        meta.appendChild(h);meta.appendChild(p);
+        el.appendChild(img);el.appendChild(meta);
+        lib.appendChild(el);
+      })
+    }
+
+    // filters
+    let currentFilter='all';
+    document.querySelectorAll('[data-filter]').forEach(b=>b.addEventListener('click',e=>{
+      currentFilter=b.dataset.filter;renderCalendar(currentFilter);
+    }))
+
+    // small features: openAll placeholder
+    document.getElementById('openAll').addEventListener('click',()=>{
+      alert('PDF / Telegram link is a placeholder. You can export this page as PDF from your browser.');
+    })
+
+    // init
+    renderLibrary(); renderCalendar(); updateProgressUI();
+
+  </script>
+</body>
+</html>
